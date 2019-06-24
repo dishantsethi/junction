@@ -165,6 +165,7 @@ Contributing
     <td align=center><img width=100 src=https://avatars.githubusercontent.com/u/316253?v=3><br>Vijay (<a href=https://github.com/vnbang2003>@vnbang2003</a>)</td>
     <td align=center><img width=100 src=https://avatars.githubusercontent.com/u/6693374?v=3><br>Vinay Singh (<a href=https://github.com/vinay13>@vinay13</a>)</td>
     <td align=center><img width=100 src=https://avatars.githubusercontent.com/u/7351791?v=3><br>Rahul Arora (<a href=https://github.com/rahulxxarora>@rahulxxarora</a>)</td>
+    <td align=center><img width=100 src=https://avatars.githubusercontent.com/dishantsethi><br>Dishant Sethi (<a href=https://github.com/dishantsethi>@dishantsethi</a>)</td>
   </tr>
 </table>
 
