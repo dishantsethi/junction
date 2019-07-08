@@ -23,14 +23,15 @@ from junction.base.constants import ConferenceSettingConstants, ConferenceStatus
 from junction.conferences.models import Conference
 from junction.feedback import permissions as feedback_permission
 
+
 from . import permissions, serializers
 from .forms import ProposalCommentForm, ProposalForm, ProposalReviewForm, ProposalsToReviewForm
 from .models import Proposal, ProposalComment, ProposalSectionReviewer, ProposalVote
 from .services import send_mail_for_new_proposal, send_mail_for_proposal_content
 
-
 class ProposalView(viewsets.ReadOnlyModelViewSet):
     queryset = Proposal.objects.filter(status=2)
+
     serializer_class = serializers.ProposalSerializer
     filter_backend = (filters.DjangoFilterBackend,)
     filter_fields = ('conference', 'review_status', 'proposal_type', 'proposal_section')
@@ -38,6 +39,7 @@ class ProposalView(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         data = super(ProposalView, self).get_queryset()
         return self.filter_queryset(data)
+
 
     def list(self, request):
         data = self.get_queryset()
@@ -58,6 +60,7 @@ def _filter_proposals(request, proposals_qs):
     serializer = serializers.ProposalFilterSerializer(data=request.GET)
     if not serializer.is_valid():
         raise Http404()
+
 
     proposal_section_filter = serializer.validated_data.get('proposal_section', None)
     proposal_type_filter = serializer.validated_data.get('proposal_type', None)
@@ -87,6 +90,7 @@ def list_proposals(request, conference_slug):
     proposals_qs = Proposal.objects.filter(conference=conference).select_related(
         'proposal_type', 'proposal_section', 'conference', 'author',
     )
+
 
     is_filtered, filter_name, proposals_qs = _filter_proposals(request, proposals_qs)
 
@@ -129,6 +133,7 @@ def create_proposal(request, conference_slug):
                       {'form': form,
                        'conference': conference, })
 
+  
     # POST Workflow
     form = ProposalForm(conference, data=request.POST, action="create")
 
@@ -201,6 +206,8 @@ def detail_proposal(request, conference_slug, slug, hashid=None):
         public_voting_setting_value = public_voting_setting.value
         try:
             if request.user.is_authenticated():
+
+
                 proposal_vote = ProposalVote.objects.get(proposal=proposal, voter=request.user)
                 vote_value = 1 if proposal_vote.up_vote else -1
         except ProposalVote.DoesNotExist:
@@ -234,6 +241,8 @@ def detail_proposal(request, conference_slug, slug, hashid=None):
         ctx['reviewers_proposal_comment_form'] = ProposalCommentForm(initial={'private': True})
     if is_reviewer:
         ctx['reviewers_only_proposal_comment_form'] = ProposalCommentForm(initial={'reviewer': True})
+
+
         ctx['reviewers_only_comments'] = comments.get_reviewers_only_comments()
 
     ctx.update({'comments': comments.get_public_comments(),
@@ -294,6 +303,8 @@ def proposals_to_review(request, conference_slug):
     ).filter(conference=conference).filter(status=ProposalStatus.PUBLIC)
     psr = ProposalSectionReviewer.objects.filter(
         conference_reviewer__reviewer=request.user,
+
+
         conference_reviewer__conference=conference)
     proposal_reviewer_sections = [p.proposal_section for p in psr]
     proposal_sections = conference.proposal_sections.all()
@@ -329,6 +340,7 @@ def proposals_to_review(request, conference_slug):
         context['errors'] = form.errors
         return render(request, 'proposals/to_review.html', context)
 
+
     # Valid Form
     p_section = form.cleaned_data['proposal_section']
     p_type = form.cleaned_data['proposal_type']
@@ -346,6 +358,7 @@ def proposals_to_review(request, conference_slug):
         section_proposals = [p for p in proposals_qs
                              if p.proposal_section == section]
         proposals_to_review.append(s_items(section, section_proposals))
+
 
     context = {
         'proposals_to_review': proposals_to_review,
